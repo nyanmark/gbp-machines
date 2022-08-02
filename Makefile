@@ -8,11 +8,9 @@ GBP_URL ?= https://gbp
 
 archive := build.tar.gz
 container := $(machine)-root
-chroot := buildah run $(container) --
+chroot := buildah run --mount=type=tmpfs,tmpfs-mode=755,destination=/run $(container) --
 config := $(notdir $(wildcard $(machine)/configs/*))
 config_targets := $(config:=.copy_config)
-universal_emerge_opts := --color=n --keep-going=n --nospinner --with-bdeps=y
-emerge_opts := $(universal_emerge_opts) --changed-deps=y --deep --jobs=4 --newuse --oneshot --update --verbose
 repos_dir := /var/db/repos
 repos := $(shell cat $(machine)/repos)
 repos_targets := $(repos:=.add_repo)
@@ -31,16 +29,12 @@ container: $(stage3-config)  ## Build the container
 
 
 # Watermark for this build
-gbp.json: .FORCE
+gbp.json: world
 	./gbp-meta.py $(machine) $(build) > $@
 
 
-.PHONY: .FORCE
-.FORCE:
-
-
 %.add_repo: %-repo.tar.gz container
-	buildah run $(container) rm -rf $(repos_dir)/$*
+	buildah unshare --mount CHROOT=$(container) sh -c 'rm -rf $$CHROOT$(repos_dir)/$*'
 	buildah add $(container) $(CURDIR)/$< $(repos_dir)/$*
 	touch $@
 
@@ -49,7 +43,7 @@ gbp.json: .FORCE
 %.copy_config: dirname = $(subst -,/,$*)
 %.copy_config: files = $(shell find $(machine)/configs/$* ! -type l -print)
 %.copy_config: $$(files) container
-	buildah run $(container) rm -rf /$(dirname)
+	buildah unshare --mount CHROOT=$(container) sh -c 'rm -rf $$CHROOT/$(dirname)'
 	buildah copy $(container) "$(CURDIR)"/$(machine)/configs/$* /$(dirname)
 	touch $@
 
@@ -59,14 +53,15 @@ chroot: $(repos_targets) $(config_targets)  ## Build the chroot in the container
 
 
 world: chroot  ## Update @world and remove unneeded pkgs & binpkgs
-	$(chroot) emerge $(emerge_opts) --usepkg=y @world gentoolkit
-	$(chroot) emerge $(universal_emerge_opts) --changed-deps=n --usepkg=n --getbinpkg=n @preserved-rebuild
-	$(chroot) eclean-pkg --changed-deps --deep --quiet
-	$(chroot) emerge $(universal_emerge_opts) --depclean --quiet
+	$(chroot) make -f- world < Makefile.container
 	touch $@
 
 
-container.img: world
+packages: world
+	buildah unshare --mount CHROOT=$(container) sh -c 'touch -r $${CHROOT}/var/cache/binpkgs/Packages $@'
+
+
+container.img: packages
 	buildah commit $(container) $(machine):$(build)
 	rm -f $@
 	buildah push $(machine):$(build) docker-archive:"$(CURDIR)"/$@:$(machine):$(build)
@@ -76,9 +71,9 @@ container.img: world
 archive: $(archive)  ## Create the build artifact
 
 
-$(archive): world gbp.json
+$(archive): gbp.json
 	tar cvf build.tar --files-from /dev/null
-	if test -d $(machine)/configs; then tar --append -f build.tar -C $(machine)/configs .; else true; fi
+	tar --append -f build.tar -C $(machine)/configs .
 	buildah copy $(container) gbp.json /var/db/repos/gbp.json
 	buildah unshare --mount CHROOT=$(container) sh -c 'tar --append -f build.tar -C $${CHROOT}/var/db repos'
 	buildah unshare --mount CHROOT=$(container) sh -c 'tar --append -f build.tar -C $${CHROOT}/var/cache binpkgs'
@@ -86,9 +81,22 @@ $(archive): world gbp.json
 	gzip build.tar
 
 
-.PHONY: push
-push: $(archive)  ## Push artifact (to GBP)
-	curl -X POST $(GBP_URL)/api/builds/$(machine)/$(build)
+logs.tar.gz: chroot
+	tar cvf logs.tar --files-from /dev/null
+	buildah unshare --mount CHROOT=$(container) sh -c 'test -d $${CHROOT}/var/tmp/portage && cd $${CHROOT}/var/tmp/portage && find . -name build.log | tar --append -f $(CURDIR)/logs.tar -T-'
+	rm -f $@
+	gzip logs.tar
+
+
+emerge-info.txt: chroot
+	$(chroot) make -f- emerge-info < Makefile.container > .$@
+	mv .$@ $@
+
+
+push: packages  ## Push artifact (to GBP)
+	$(MAKE) machine=$(machine) build=$(build) $(archive)
+	gbp --url=$(GBP_URL) pull $(machine) $(build)
+	touch $@
 
 
 .PHONY: %.machine
@@ -100,7 +108,7 @@ push: $(archive)  ## Push artifact (to GBP)
 	cp -r $(base)/. $*/
 
 
-$(stage4): stage4.excl world
+$(stage4): stage4.excl packages
 	buildah unshare --mount CHROOT=$(container) sh -c 'tar -cf $@ -I "xz -9 -T0" -X $< --xattrs --numeric-owner -C $${CHROOT} .'
 
 
@@ -119,7 +127,7 @@ clean-container:  ## Remove the container
 
 .PHONY: clean
 clean: clean-container  ## Clean project files
-	rm -rf build.tar $(archive) container container.img world *.add_repo chroot *.copy_config world $(stage4) gbp.json
+	rm -rf build.tar $(archive) container container.img packages world *.add_repo chroot *.copy_config $(stage4) gbp.json push
 
 
 .PHONY: help
