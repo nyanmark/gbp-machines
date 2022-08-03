@@ -4,7 +4,7 @@
 
 machine ?= gbp
 build ?= 1
-GBP_URL ?= https://gbp
+BUILD_PUBLISHER_URL ?= http://localhost/
 
 archive := build.tar.gz
 container := $(machine)-root
@@ -95,7 +95,7 @@ emerge-info.txt: chroot
 
 push: packages  ## Push artifact (to GBP)
 	$(MAKE) machine=$(machine) build=$(build) $(archive)
-	gbp --url=$(GBP_URL) pull $(machine) $(build)
+	gbp --url=$(BUILD_PUBLISHER_URL) pull $(machine) $(build)
 	touch $@
 
 
