@@ -20,7 +20,7 @@ stage4 := stage4.tar.xz
 stage3-config := $(machine)/stage3
 
 
-container: stage3-image := gentoo/stage3:$(shell cat $(stage3-config))
+container: stage3-image := docker.io/gentoo/stage3:$(shell cat $(stage3-config))
 container: $(stage3-config)  ## Build the container
 	-buildah rm $(container)
 	buildah --name $(container) from --cap-add=CAP_SYS_PTRACE $(stage3-image)
