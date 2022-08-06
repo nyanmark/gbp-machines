@@ -2,7 +2,7 @@
 .SHELLFLAGS := -eu -o pipefail -c
 .DEFAULT_GOAL := world
 
-machine ?= gbp
+machine ?= gbpbox
 build ?= 1
 BUILD_PUBLISHER_URL ?= http://localhost/
 
