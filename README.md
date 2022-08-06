@@ -23,7 +23,7 @@ the `base` machine.  To instead base it off of another previous definition,
 say `testing`:
 
 ```
-make mylatop.machine base=testing
+make mylaptop.machine base=testing
 ```
 
 Then make your desired changes to the machine definition, `git add mymachine`,
