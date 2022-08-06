@@ -1,0 +1,11 @@
+app-admin/sudo
+app-arch/pigz
+app-containers/buildah
+app-containers/runc
+dev-db/postgresql
+dev-lang/python:3.10
+dev-util/jenkins-bin
+dev-vcs/git
+net-misc/rabbitmq-server
+net-misc/rsync
+www-servers/nginx
