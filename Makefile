@@ -19,11 +19,15 @@ stage4 := stage4.tar.xz
 # Stage3 image tag to use.  See https://hub.docker.com/r/gentoo/stage3/tags
 stage3-config := $(machine)/stage3
 
+# Container platform to use (less the "linux/" part)
+platform-config := $(machine)/arch
 
-container: stage3-image := docker.io/gentoo/stage3:$(shell cat $(stage3-config))
-container: $(stage3-config)  ## Build the container
+
+container: stage3-image := gentoo/stage3:$(shell cat $(stage3-config))
+container: platform := linux/$(shell cat $(platform-config))
+container: $(stage3-config) $(platform-config)  ## Build the container
 	-buildah rm $(container)
-	buildah --name $(container) from --cap-add=CAP_SYS_PTRACE $(stage3-image)
+	buildah --name $(container) from --platform=$(platform) --cap-add=CAP_SYS_PTRACE $(stage3-image)
 	buildah config --env FEATURES="-cgroup -ipc-sandbox -mount-sandbox -network-sandbox -pid-sandbox -userfetch -userpriv -usersandbox -usersync binpkg-multi-instance buildpkg noinfo unmerge-orphans" $(container)
 	touch $@
 
