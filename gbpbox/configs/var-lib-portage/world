@@ -1,5 +1,4 @@
 app-admin/sudo
-app-arch/pigz
 app-containers/buildah
 app-containers/runc
 dev-db/postgresql

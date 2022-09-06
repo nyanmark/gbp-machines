@@ -1,3 +1,2 @@
-app-arch/pigz symlink
 dev-db/postgresql server
 sys-libs/glibc clone3
