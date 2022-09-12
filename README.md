@@ -7,7 +7,7 @@
 This is a collection of machine definitions and build instructions for [Gentoo
 Build Publisher](https://github.com/enku/gentoo-build-publisher), as described
 in the [Install
-Guide](https://github.com/enku/gentoo-build-publisher/blob/master/docs/how-to-install.md).
+Guide](https://github.com/enku/gentoo-build-publisher/blob/master/docs/how-to-install.md#gentoo-build-publisher-install-guide).
 These can be used as a basis for creating your own personal machine
 definitions.  The expectation is that you'd fork this repo and just go with
 it.
