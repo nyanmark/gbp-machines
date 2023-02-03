@@ -52,7 +52,7 @@ publish automatically, simply replace `pull` with `publish`.
 By the way, there's nothing dictating that machines in GBP be built a specific
 way.  You can build machine artifacts in any manner you want.  As long as the
 artifacts have all the
-[contents](https://github.com/enku/gentoo-build-publisher/blob/master/src/gentoo_build_publisher/types.py#L49)
+[contents](https://github.com/enku/gentoo-build-publisher/blob/master/docs/artifact-spec.md#gentoo-build-publisher-artifact-specification)
 that GBP expects.  This is merely how **I** build my machines but I think it's
 a good guide and starting point. Again you are free to go with where ever your
 imagination takes you!
