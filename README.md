@@ -34,7 +34,12 @@ The following starter machines are included:
 
 - `base` is a from-the-handbook base (systemd) Gentoo install with an empty
   world file.
-- `testing` is the same as base but with `ACCEPT_KEYWORDS=~amd64`
+- `arm64-base` is like base but with an ARM64 target. This is meant to be
+   build on an AMD64 machine using [QEMU](https://www.qemu.org/) as the
+   [binary format helper](https://en.wikipedia.org/wiki/Binfmt_misc). Because
+   of the underlying emulation this machine build runs slower than the other
+   builds.
+- `testing` is the same as `base` but with `ACCEPT_KEYWORDS=~amd64`
 - `gbpbox` is a machine definition per the GBP Install Guide. You can use it
   to have your GBP instance build itself.
 
