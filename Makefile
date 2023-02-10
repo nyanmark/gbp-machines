@@ -28,7 +28,7 @@ container: platform := linux/$(shell cat $(platform-config))
 container: $(stage3-config) $(platform-config)  ## Build the container
 	-buildah rm $(container)
 	buildah --name $(container) from --platform=$(platform) --cap-add=CAP_SYS_PTRACE $(stage3-image)
-	buildah config --env FEATURES="-cgroup -ipc-sandbox -mount-sandbox -network-sandbox -pid-sandbox -userfetch -userpriv -usersandbox -usersync binpkg-multi-instance buildpkg noinfo unmerge-orphans" $(container)
+	buildah config --env FEATURES="-cgroup -ipc-sandbox -mount-sandbox -network-sandbox -pid-sandbox -userfetch -usersync binpkg-multi-instance buildpkg noinfo unmerge-orphans" $(container)
 	touch $@
 
 
