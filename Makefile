@@ -8,7 +8,10 @@ BUILD_PUBLISHER_URL ?= http://localhost/
 
 archive := build.tar.gz
 container := $(machine)-root
-chroot := buildah run --mount=type=tmpfs,tmpfs-mode=755,destination=/run $(container) --
+chroot := buildah run \
+  --volume /proc:/proc \
+  --mount=type=tmpfs,tmpfs-mode=755,destination=/run $(container) \
+  --
 config := $(notdir $(wildcard $(machine)/configs/*))
 config_targets := $(config:=.copy_config)
 repos_dir := /var/db/repos
