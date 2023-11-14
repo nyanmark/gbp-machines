@@ -10,6 +10,7 @@ archive := build.tar.gz
 container := $(machine)-root
 chroot := buildah run \
   --volume /proc:/proc \
+  --volume "$(CURDIR)"/Makefile.container:/Makefile.gbp \
   --mount=type=tmpfs,tmpfs-mode=755,destination=/run $(container) \
   --
 config := $(notdir $(wildcard $(machine)/configs/*))
@@ -60,7 +61,7 @@ chroot: $(repos_targets) $(config_targets)  ## Build the chroot in the container
 
 
 world: chroot  ## Update @world and remove unneeded pkgs & binpkgs
-	$(chroot) make -f- world < Makefile.container
+	$(chroot) make -C / -f Makefile.gbp world
 	touch $@
 
 
@@ -96,7 +97,7 @@ logs.tar.gz: chroot
 
 
 emerge-info.txt: chroot
-	$(chroot) make -f- emerge-info < Makefile.container > .$@
+	$(chroot) make -C / -f Makefile.gbp emerge-info > .$@
 	mv .$@ $@
 
 
