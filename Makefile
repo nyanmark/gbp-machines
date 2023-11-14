@@ -9,6 +9,9 @@ BUILD_PUBLISHER_URL ?= http://localhost/
 archive := build.tar.gz
 container := $(machine)-root
 chroot := buildah run \
+  --env=BUILD_HOST=$(shell uname -n) \
+  --env=BUILD_MACHINE=$(machine) \
+  --env=BUILD_NUMBER=$(BUILD_NUMBER) \
   --volume /proc:/proc \
   --volume "$(CURDIR)"/Makefile.container:/Makefile.gbp \
   --mount=type=tmpfs,tmpfs-mode=755,destination=/run $(container) \
