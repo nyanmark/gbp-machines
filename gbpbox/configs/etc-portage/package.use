@@ -1,3 +1,4 @@
 app-misc/mime-types nginx
 dev-db/postgresql server
+net-firewall/iptables nftables
 sys-libs/glibc clone3
