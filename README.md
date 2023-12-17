@@ -32,7 +32,7 @@ Then make your desired changes to the machine definition.
 
 ```
 git add mylaptop
-git commit -m 'New machine: mylaptop
+git commit -m 'New machine: mylaptop'
 git push
 ```
 
