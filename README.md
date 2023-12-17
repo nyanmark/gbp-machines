@@ -14,6 +14,8 @@ it.
 
 To create a new machine definition simply:
 
+[Fork me on GitHub.](https://github.com/enku/gbp-machines/fork)
+
 ```
 make mylaptop.machine
 ```
@@ -26,9 +28,24 @@ say `testing`:
 make mylaptop.machine base=testing
 ```
 
-Then make your desired changes to the machine definition, `git add mymachine`,
-`git commit -m 'New machine: mymachine` and `git push` it.  Then from your GBP
-Jenkins instance, create a new job called `mymachine` and start building.
+Then make your desired changes to the machine definition.
+
+```
+git add mylaptop
+git commit -m 'New machine: mylaptop
+git push
+```
+
+Then from your GBP instance, create a new job called `mylaptop`.
+
+```
+gbp addmachine mylaptop https://github.com/<mygithubuser>/gbp-machines.git
+```
+Then start building!
+
+```
+gbp build mylaptop
+```
 
 The following starter machines are included:
 
