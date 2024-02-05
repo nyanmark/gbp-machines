@@ -21,7 +21,7 @@ config_targets := $(config:=.copy_config)
 repos_dir := /var/db/repos
 repos := $(shell cat $(machine)/repos)
 repos_targets := $(repos:=.add_repo)
-stage4 := stage4.tar.xz
+stage4 := $(machine)-stage4.tar.xz
 
 # Stage3 image tag to use.  See https://hub.docker.com/r/gentoo/stage3/tags
 stage3-config := $(machine)/stage3
