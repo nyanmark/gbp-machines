@@ -60,6 +60,7 @@ gbp.json: world
 
 
 chroot: $(repos_targets) $(config_targets)  ## Build the chroot in the container
+	$(chroot) make -C / -f Makefile.gbp cache
 	touch $@
 
 

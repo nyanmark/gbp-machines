@@ -11,6 +11,11 @@ universal_opts := --color=n --keep-going=n --nospinner --with-bdeps=y
 opts := $(universal_opts) --changed-deps=y --deep --jobs=4 --newuse --oneshot --update --verbose
 
 
+.PHONY: cache
+cache: ## Regenerate the dependency cache
+	merge $(opts) --regen
+
+
 .PHONY: world
 world: ## Update @world and remove unneeded pkgs & binpkgs
 	MAKELEVEL=0 emerge $(opts) --usepkg=y @world app-portage/gentoolkit
