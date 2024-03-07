@@ -13,7 +13,7 @@ opts := $(universal_opts) --changed-deps=y --deep --jobs=4 --newuse --oneshot --
 
 .PHONY: cache
 cache: ## Regenerate the dependency cache
-	merge $(opts) --regen
+	emerge $(opts) --regen
 
 
 .PHONY: world
