@@ -7,4 +7,5 @@ dev-util/jenkins-bin
 dev-vcs/git
 net-misc/rabbitmq-server
 net-misc/rsync
+sys-kernel/gentoo-kernel
 www-servers/nginx
