@@ -15,7 +15,7 @@ chroot := buildah run \
   --volume /proc:/proc \
   --volume "$(CURDIR)"/Makefile.container:/Makefile.gbp \
   --mount=type=tmpfs,tmpfs-mode=755,destination=/run \
-  --mount=type=tmpfs,tmpfs-mode=755,tmpfs-size=24G,uid=portage,gid=portage,destination=/var/tmp/portage \
+  --mount=type=tmpfs,destination=/var/tmp/portage \
   $(container) \
   --
 config := $(notdir $(wildcard $(machine)/configs/*))
