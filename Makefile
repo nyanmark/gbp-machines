@@ -14,7 +14,9 @@ chroot := buildah run \
   --env=BUILD_NUMBER=$(BUILD_NUMBER) \
   --volume /proc:/proc \
   --volume "$(CURDIR)"/Makefile.container:/Makefile.gbp \
-  --mount=type=tmpfs,tmpfs-mode=755,destination=/run $(container) \
+  --mount=type=tmpfs,tmpfs-mode=755,destination=/run \
+  --mount=type=tmpfs,tmpfs-mode=755,tmpfs-size=24G,uid=portage,gid=portage,destination=/var/tmp/portage \
+  $(container) \
   --
 config := $(notdir $(wildcard $(machine)/configs/*))
 config_targets := $(config:=.copy_config)
